@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مكتب رئيس التحقيق</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --ink:#152538; --ink-2:#44546A; --ink-3:#7A8797;
+  --paper:#F4F5F2; --panel:#FFFFFF; --line:#D9DDD6; --line-2:#EBEDE8;
+  --navy:#1E3A5F; --navy-soft:#E6ECF4;
+  --gold:#B8860B; --gold-soft:#FBF3DC;
+  --red:#A93A3A; --red-soft:#F9E6E6;
+  --green:#2C7A5B; --green-soft:#E3F1EA;
+  --r:6px; --r-lg:10px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  color-scheme:dark;
+  --ink:#ECEFF3; --ink-2:#B9C2CE; --ink-3:#7F8B99;
+  --paper:#121A24; --panel:#1A2432; --line:#2B3747; --line-2:#222D3B;
+  --navy:#7FA7D8; --navy-soft:#1F2E42;
+  --gold:#D9A93B; --gold-soft:#33301C;
+  --red:#E07070; --red-soft:#3B2222;
+  --green:#5FB890; --green-soft:#1C332A;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#ECEFF3; --ink-2:#B9C2CE; --ink-3:#7F8B99;
+  --paper:#121A24; --panel:#1A2432; --line:#2B3747; --line-2:#222D3B;
+  --navy:#7FA7D8; --navy-soft:#1F2E42;
+  --gold:#D9A93B; --gold-soft:#33301C;
+  --red:#E07070; --red-soft:#3B2222;
+  --green:#5FB890; --green-soft:#1C332A;
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,Arial,sans-serif;font-size:15px;line-height:1.6}
+h1,h2,h3{margin:0;line-height:1.3;font-weight:600}
+h1{font-size:26px}h2{font-size:19px}h3{font-size:16px}
+p{margin:0 0 8px}
+a{color:var(--navy)}
+button{font:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 10px;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--navy);outline-offset:1px}
+textarea{min-height:80px;resize:vertical}
+label{display:block;font-size:13px;color:var(--ink-2);margin-bottom:4px}
+.field{margin-bottom:12px}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:140px}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 14px;border-radius:var(--r);font-weight:500}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#0E1620}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#0E1620}}
+.btn.danger{color:var(--red);border-color:var(--red)}
+.btn.sm{padding:4px 10px;font-size:13px}
+.btn.link{border:none;background:none;color:var(--navy);padding:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+/* layout */
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:100%}
+.side{background:var(--panel);border-inline-start:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{padding:6px 8px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand b{display:block;font-size:17px}.brand span{font-size:13px;color:var(--ink-3)}
+.nav button{display:flex;align-items:center;justify-content:space-between;width:100%;text-align:start;background:none;border:none;padding:9px 10px;border-radius:var(--r);color:var(--ink-2);margin-bottom:2px}
+.nav button:hover{background:var(--paper)}
+.nav button.on{background:var(--navy-soft);color:var(--navy);font-weight:600}
+.nav .cnt{background:var(--red);color:#fff;font-size:12px;padding:0 7px;border-radius:10px;min-width:20px;text-align:center}
+.side .me{margin-top:18px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-3)}
+.side .me b{display:block;color:var(--ink);font-size:14px}
+.main{padding:26px 30px 60px;min-width:0}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.head .sub{color:var(--ink-3);font-size:14px}
+.topbar{display:none}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .side{display:none}
+  .topbar{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+  .topbar button{white-space:nowrap;border:1px solid var(--line);background:var(--paper);padding:6px 11px;border-radius:20px;font-size:13px;color:var(--ink-2)}
+  .topbar button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+  .main{padding:16px 14px 60px}
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--panel);z-index:10}
+
+/* panels / tables */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:18px}
+.panel h2{margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:start;font-weight:600;color:var(--ink-2);padding:8px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line-2);vertical-align:top}
+tr.imp td{background:var(--gold-soft)}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--paper)}
+.tag{display:inline-block;padding:1px 9px;border-radius:12px;font-size:12px;font-weight:500;background:var(--paper);border:1px solid var(--line);white-space:nowrap}
+.tag.red{background:var(--red-soft);color:var(--red);border-color:transparent}
+.tag.gold{background:var(--gold-soft);color:var(--gold);border-color:transparent}
+.tag.green{background:var(--green-soft);color:var(--green);border-color:transparent}
+.tag.navy{background:var(--navy-soft);color:var(--navy);border-color:transparent}
+.muted{color:var(--ink-3);font-size:13px}
+.empty{color:var(--ink-3);padding:22px;text-align:center;border:1px dashed var(--line);border-radius:var(--r)}
+.stat{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+.stat b{font-size:24px;font-weight:600;line-height:1.1}.stat span{font-size:13px;color:var(--ink-3)}
+.alert{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:var(--r);border:1px solid var(--line);margin-bottom:8px;background:var(--panel)}
+.alert.red{border-inline-start:4px solid var(--red)}
+.alert.gold{border-inline-start:4px solid var(--gold)}
+.alert.navy{border-inline-start:4px solid var(--navy)}
+.alert .t{flex:1}.alert .t b{display:block}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+.tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:8px 12px;color:var(--ink-2);margin-bottom:-1px}
+.tabs button.on{color:var(--navy);border-bottom-color:var(--navy);font-weight:600}
+.files a{display:inline-flex;align-items:center;gap:6px;margin:0 0 6px 8px;padding:4px 10px;border:1px solid var(--line);border-radius:var(--r);text-decoration:none;font-size:13px}
+
+/* duty board (home) */
+.duty{background:var(--navy);color:#fff;border-radius:var(--r-lg);padding:26px 28px;margin-bottom:18px;position:relative;overflow:hidden}
+:root[data-theme="dark"] .duty{color:#0E1620}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .duty{color:#0E1620}}
+.duty .d{font-size:14px;opacity:.8}
+.duty h1{font-size:30px;margin:2px 0 14px}
+.duty .names{display:flex;flex-wrap:wrap;gap:10px}
+.duty .names span{background:rgba(255,255,255,.14);padding:8px 16px;border-radius:30px;font-size:18px;font-weight:500}
+:root[data-theme="dark"] .duty .names span{background:rgba(0,0,0,.15)}
+.duty .none{opacity:.75;font-size:16px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .h{font-size:12px;color:var(--ink-3);text-align:center;padding:4px 0}
+.cal .c{border:1px solid var(--line-2);border-radius:var(--r);min-height:72px;padding:5px 6px;font-size:12px;background:var(--panel)}
+.cal .c.off{opacity:.35}
+.cal .c.today{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+.cal .c.edit{cursor:pointer}.cal .c.edit:hover{background:var(--paper)}
+.cal .n{font-weight:600;color:var(--ink-2);margin-bottom:3px}
+.cal .p{display:block;color:var(--ink);line-height:1.35}
+.cal .p.more{color:var(--ink-3)}
+@media (max-width:860px){.cal .c{min-height:56px;font-size:11px}}
+
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(10,20,30,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.md{background:var(--panel);border-radius:var(--r-lg);width:min(680px,100%);max-height:92vh;overflow:auto;padding:22px 24px}
+.md h2{margin-bottom:14px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));inset-inline-start:20px;background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:var(--r);z-index:30;font-size:14px}
+.notice{background:var(--gold-soft);color:var(--ink);border:1px solid var(--gold);border-radius:var(--r);padding:10px 14px;font-size:13px;margin-bottom:16px}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login .box{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:30px 28px}
+.login h1{margin-bottom:4px}.login .sub{color:var(--ink-3);margin-bottom:20px}
+.chk{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line-2)}
+.chk input{width:auto}
+.diff{font-size:13px;background:var(--paper);border-radius:var(--r);padding:8px 12px;margin-top:6px}
+.diff div{display:flex;gap:8px}.diff s{color:var(--ink-3)}
+@media (prefers-reduced-motion:no-preference){.ov{animation:f .12s ease-out}@keyframes f{from{opacity:0}to{opacity:1}}}
+@media print{.side,.topbar,.actions,.btn{display:none !important}.main{padding:0}.shell{display:block}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ========================================================
+   إعدادات — عدّل هذا القسم فقط
+   ======================================================== */
+const CONFIG = {
+  appName: "مكتب رئيس التحقيق",
+  // بيانات مشروع Firebase. اتركها فارغة للتجربة محلياً (وضع تجريبي يحفظ في المتصفح فقط)
+  firebase: {
+    apiKey: "AIzaSyC9mDYnkeBTzdNZOSs3vxqROX9HN93iTR0",
+    authDomain: "hasan-head-detective.firebaseapp.com",
+    projectId: "hasan-head-detective",
+    storageBucket: "hasan-head-detective.firebasestorage.app",
+    messagingSenderId: "14136508591",
+    appId: "1:14136508591:web:51b34a45ae0122f8b7945a"
+  },
+  // أرقام هواتف من يحصل على صلاحية "رئيس التحقيق" عند التسجيل.
+  // إذا تركتها فارغة: أول من يسجّل يصبح الرئيس.
+  headPhones: [],
+  // اختياري: إشعار تلجرام للرئيس عند كل إدخال من السكرتارية
+  telegram: { botToken: "", chatId: "" }
+};
+
+/* ========================================================
+   طبقة البيانات (Firebase أو وضع تجريبي)
+   ======================================================== */
+const COLS = ['users','detectives','cases','leaves','attendance','schedules','requests','activity'];
+const DB = (() => {
+  const listeners = {};
+  if (!CONFIG.firebase.apiKey) {
+    let store = {};
+    try { store = JSON.parse(localStorage.getItem('hd_demo') || '{}'); } catch (e) { store = {}; }
+    COLS.forEach(c => store[c] = store[c] || []);
+    const save = () => { try { localStorage.setItem('hd_demo', JSON.stringify(store)); } catch (e) { toast('مساحة التخزين التجريبي ممتلئة — الملفات الكبيرة لا تُحفظ'); } };
+    const emit = c => (listeners[c] || []).forEach(fn => fn(store[c].slice()));
+    return {
+      demo: true,
+      async init() {},
+      subscribe(c, fn) { (listeners[c] = listeners[c] || []).push(fn); fn(store[c].slice()); },
+      async add(c, data) { const id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); store[c].push({ id, ...data }); save(); emit(c); return id; },
+      async update(c, id, data) { const i = store[c].findIndex(d => d.id === id); if (i > -1) { store[c][i] = { ...store[c][i], ...data }; save(); emit(c); } },
+      async remove(c, id) { store[c] = store[c].filter(d => d.id !== id); save(); emit(c); },
+      async upload(path, file) { return new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(file); }); },
+      reset() { localStorage.removeItem('hd_demo'); localStorage.removeItem('hd_session'); location.reload(); }
+    };
+  }
+  let fs, st;
+  const load = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
+  return {
+    demo: false,
+    async init() {
+      const base = 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.14.1/';
+      await load(base + 'firebase-app-compat.min.js');
+      await load(base + 'firebase-auth-compat.min.js');
+      await load(base + 'firebase-firestore-compat.min.js');
+      await load(base + 'firebase-storage-compat.min.js');
+      firebase.initializeApp(CONFIG.firebase);
+      // دخول مجهول صامت حتى تسمح قواعد Firestore/Storage بطلب auth فقط
+      await firebase.auth().signInAnonymously();
+      fs = firebase.firestore(); st = firebase.storage();
+    },
+    subscribe(c, fn) { fs.collection(c).onSnapshot(s => fn(s.docs.map(d => ({ id: d.id, ...d.data() }))), e => toast('تعذّر قراءة ' + c + ': ' + e.message)); },
+    async add(c, data) { const r = await fs.collection(c).add(data); return r.id; },
+    async update(c, id, data) { await fs.collection(c).doc(id).update(data); },
+    async remove(c, id) { await fs.collection(c).doc(id).delete(); },
+    async upload(path, file) { const ref = st.ref().child(path); await ref.put(file); return ref.getDownloadURL(); }
+  };
+})();
+
+/* ========================================================
+   أدوات مساعدة
+   ======================================================== */
+const S = { user: null, page: 'home', data: {}, month: '', tab: {}, detective: null, lastSeen: localStorage.getItem('hd_seen') || '' };
+COLS.forEach(c => S.data[c] = []);
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+const pad = n => String(n).padStart(2, '0');
+const todayISO = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+const nowISO = () => new Date().toISOString();
+const DAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+const MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+const fmt = iso => { if (!iso) return '—'; const [y, m, d] = iso.slice(0, 10).split('-'); return `${d}/${m}/${y}`; };
+const fmtLong = iso => { const d = new Date(iso + 'T00:00:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
+const fmtTime = iso => { if (!iso) return ''; const d = new Date(iso); return `${fmt(iso)} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const monthLabel = m => { const [y, mm] = m.split('-'); return `${MONTHS[+mm - 1]} ${y}`; };
+const daysSince = iso => Math.floor((new Date(todayISO()) - new Date(iso.slice(0, 10))) / 864e5);
+const daysUntil = iso => -daysSince(iso);
+const shiftMonth = (m, n) => { const [y, mm] = m.split('-').map(Number); const d = new Date(y, mm - 1 + n, 1); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; };
+const detName = id => (S.data.detectives.find(d => d.id === id) || {}).name || '—';
+const isHead = () => S.user && S.user.role === 'head';
+const CASE_STATUS = ['قيد التحقيق', 'محالة للنيابة', 'محفوظة', 'مغلقة'];
+const OPEN_STATUS = ['قيد التحقيق', 'محالة للنيابة'];
+const LEAVE_TYPES = { annual: 'إجازة دورية', sick: 'إجازة طبية', emergency: 'إجازة طارئة', permission: 'استئذان' };
+const ATT_STATUS = ['حاضر', 'متأخر', 'غائب', 'مأمورية', 'إجازة'];
+const PERM_MAX_COUNT = 4, PERM_MAX_HOURS = 12;
+
+let toastT;
+function toast(msg) { let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); } t.textContent = msg; clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3200); }
+function modal(html) { closeModal(); const ov = document.createElement('div'); ov.className = 'ov'; ov.innerHTML = `<div class="md" role="dialog">${html}</div>`; ov.addEventListener('click', e => { if (e.target === ov) closeModal(); }); document.body.appendChild(ov); const f = ov.querySelector('input,select,textarea'); if (f) f.focus(); }
+function closeModal() { const o = $('.ov'); if (o) o.remove(); }
+function formData(form) { const o = {}; new FormData(form).forEach((v, k) => { if (k.endsWith('[]')) { (o[k.slice(0, -2)] = o[k.slice(0, -2)] || []).push(v); } else o[k] = typeof v === 'string' ? v.trim() : v; }); form.querySelectorAll('input[type=checkbox]').forEach(c => { if (c.name) o[c.name] = c.checked; }); return o; }
+
+/* ========================================================
+   الكتابة والصلاحيات والتنبيهات
+   ======================================================== */
+async function log(action, col, docId, summary, detectiveId) {
+  await DB.add('activity', { action, col, docId, summary, detectiveId: detectiveId || null, by: S.user.phone, byName: S.user.name, role: S.user.role, at: nowISO() });
+}
+function notifyHead(text) {
+  const t = CONFIG.telegram; if (!t.botToken || !t.chatId) return;
+  fetch(`https://api.telegram.org/bot${t.botToken}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: t.chatId, text }) }).catch(() => {});
+}
+// الإضافة مسموحة للجميع. التعديل والحذف: الرئيس مباشرة، السكرتارية كطلب يوافق عليه الرئيس.
+async function write(col, action, id, data, summary, detectiveId) {
+  try {
+    if (action === 'add') {
+      const nid = await DB.add(col, { ...data, createdBy: S.user.phone, createdByName: S.user.name, createdAt: nowISO() });
+      await log('add', col, nid, summary, detectiveId);
+      if (!isHead()) notifyHead(`إدخال جديد — ${S.user.name}:\n${summary}`);
+      toast('تم الحفظ');
+      return nid;
+    }
+    if (isHead()) {
+      if (action === 'update') await DB.update(col, id, { ...data, updatedBy: S.user.phone, updatedAt: nowISO() });
+      if (action === 'remove') await DB.remove(col, id);
+      await log(action, col, id, summary, detectiveId);
+      toast(action === 'remove' ? 'تم الحذف' : 'تم التعديل');
+      return id;
+    }
+    await DB.add('requests', { col, docId: id, action, changes: data || {}, summary, detectiveId: detectiveId || null, by: S.user.phone, byName: S.user.name, at: nowISO(), status: 'pending' });
+    await log('request', col, id, 'طلب ' + (action === 'remove' ? 'حذف' : 'تعديل') + ': ' + summary, detectiveId);
+    notifyHead(`طلب ${action === 'remove' ? 'حذف' : 'تعديل'} من ${S.user.name}:\n${summary}`);
+    toast('أُرسل الطلب للرئيس للموافقة');
+    return id;
+  } catch (e) { toast('خطأ: ' + e.message); throw e; }
+}
+async function uploadFiles(fileList, prefix) {
+  const out = [];
+  for (const f of fileList) {
+    if (!f.size) continue;
+    if (DB.demo && f.size > 1.5e6) { toast(`الملف ${f.name} كبير للوضع التجريبي (الحد 1.5MB)`); continue; }
+    const url = await DB.upload(`${prefix}/${Date.now()}_${f.name}`, f);
+    out.push({ name: f.name, url, by: S.user.name, at: nowISO() });
+  }
+  return out;
+}
+
+/* ========================================================
+   حسابات مشتقة
+   ======================================================== */
+function caseLastMove(c) { const m = (c.movements || []).slice().sort((a, b) => b.date.localeCompare(a.date))[0]; return m ? m : { date: c.filedDate, type: '' }; }
+function permStats(detId, month) {
+  const list = S.data.leaves.filter(l => l.detectiveId === detId && l.type === 'permission' && (l.from || '').startsWith(month));
+  return { count: list.length, hours: list.reduce((s, l) => s + (+l.hours || 0), 0) };
+}
+function leaveCounts(detId, year) {
+  const list = S.data.leaves.filter(l => l.detectiveId === detId && (l.from || '').startsWith(year));
+  const o = { annual: 0, sick: 0, emergency: 0, permission: 0, days: 0 };
+  list.forEach(l => { o[l.type] = (o[l.type] || 0) + 1; if (l.type !== 'permission' && l.from && l.to) o.days += daysSince(l.from) - daysSince(l.to) + 1; });
+  return o;
+}
+function nextLeave(detId) { const t = todayISO(); return S.data.leaves.filter(l => l.detectiveId === detId && l.type !== 'permission' && l.from > t).sort((a, b) => a.from.localeCompare(b.from))[0]; }
+function scheduleFor(month) { return S.data.schedules.find(s => s.month === month); }
+function dutyOn(iso) { const s = scheduleFor(iso.slice(0, 7)); return s && s.days ? (s.days[iso.slice(8, 10)] || []) : []; }
+function buildAlerts() {
+  const a = [];
+  S.data.cases.filter(c => OPEN_STATUS.includes(c.status)).forEach(c => {
+    const lm = caseLastMove(c); if (!lm.date) return; const d = daysSince(lm.date);
+    if (d >= 7) a.push({ kind: 'red', title: `قضية بلا حركة منذ ${d} يوم`, text: `${c.caseNo} — ${c.title} (${detName(c.detectiveId)})`, go: () => openCase(c.id) });
+  });
+  const m = todayISO().slice(0, 7);
+  S.data.detectives.forEach(dt => {
+    const p = permStats(dt.id, m);
+    if (p.count >= PERM_MAX_COUNT || p.hours >= PERM_MAX_HOURS) a.push({ kind: 'gold', title: `${dt.name} استنفد حد الاستئذان لهذا الشهر`, text: `${p.count} مرات / ${p.hours} ساعة من ${PERM_MAX_COUNT} مرات / ${PERM_MAX_HOURS} ساعة`, go: () => { S.detective = dt.id; nav('detective'); } });
+    (dt.notes || []).forEach(n => { if (n.date) { const u = daysUntil(n.date); if (u >= 0 && u <= 7) a.push({ kind: 'navy', title: `${dt.name}: ${u === 0 ? 'اليوم' : 'بعد ' + u + ' يوم'}`, text: n.text, go: () => { S.detective = dt.id; nav('detective'); } }); } });
+    const nl = nextLeave(dt.id); if (nl) { const u = daysUntil(nl.from); if (u <= 14) a.push({ kind: 'navy', title: `${dt.name} — ${LEAVE_TYPES[nl.type]} متوقعة ${u === 0 ? 'اليوم' : 'بعد ' + u + ' يوم'}`, text: `${fmt(nl.from)} إلى ${fmt(nl.to)}`, go: () => { S.detective = dt.id; nav('detective'); } }); }
+  });
+  const pend = S.data.requests.filter(r => r.status === 'pending').length;
+  if (pend) a.unshift({ kind: 'gold', title: `${pend} طلب تعديل بانتظار موافقتك`, text: 'من السكرتارية', go: () => nav('approvals') });
+  return a;
+}
+const unreadCount = () => S.data.activity.filter(x => x.role !== 'head' && x.at > S.lastSeen).length;
+
+/* ========================================================
+   التنقل والهيكل
+   ======================================================== */
+const HEAD_PAGES = [['home', 'الرئيسية'], ['detectives', 'المحققون'], ['cases', 'القضايا'], ['leaves', 'الإجازات والطبيات'], ['attendance', 'الحضور والانصراف'], ['schedule', 'جدول الأحوال'], ['approvals', 'طلبات التعديل'], ['activity', 'التنبيهات والسجل'], ['users', 'المستخدمون']];
+const SEC_PAGES = [['entry', 'إدخال بيانات'], ['mine', 'إدخالاتي']];
+function nav(p) { S.page = p; window.scrollTo(0, 0); render(); }
+function render() {
+  const app = $('#app');
+  if (!S.user) { app.innerHTML = loginView(); return; }
+  const pages = isHead() ? HEAD_PAGES : SEC_PAGES;
+  const counts = { approvals: isHead() ? S.data.requests.filter(r => r.status === 'pending').length : 0, activity: isHead() ? unreadCount() : 0 };
+  const navHtml = pages.map(([k, l]) => `<button class="${S.page === k ? 'on' : ''}" onclick="nav('${k}')">${l}${counts[k] ? `<span class="cnt">${counts[k]}</span>` : ''}</button>`).join('');
+  app.innerHTML = `
+  <div class="shell">
+    <aside class="side">
+      <div class="brand"><b>${esc(CONFIG.appName)}</b><span>${isHead() ? 'لوحة رئيس التحقيق' : 'إدخال السكرتارية'}</span></div>
+      <nav class="nav">${navHtml}</nav>
+      <div class="me"><b>${esc(S.user.name)}</b>${esc(S.user.phone)} · ${isHead() ? 'رئيس' : 'سكرتارية'}<br><button class="btn link" onclick="logout()">تسجيل الخروج</button>${DB.demo ? ' · <button class="btn link" onclick="DB.reset()">مسح البيانات التجريبية</button>' : ''}</div>
+    </aside>
+    <div>
+      <div class="topbar">${navHtml}</div>
+      <main class="main">${DB.demo ? '<div class="notice">وضع تجريبي: البيانات محفوظة في هذا المتصفح فقط. أضف بيانات Firebase في أعلى الملف لتشغيله فعلياً.</div>' : ''}${pageView()}</main>
+    </div>
+  </div>`;
+}
+function pageView() {
+  const p = S.page;
+  if (!isHead() && !['entry', 'mine'].includes(p)) S.page = 'entry';
+  const views = { home, detectives, detective: detectiveView, cases, leaves, attendance, schedule, approvals, activity, users, entry, mine };
+  return (views[S.page] || home)();
+}
+
+/* ========================================================
+   الدخول
+   ======================================================== */
+function loginView() {
+  return `<div class="login"><div class="box">
+    <h1>${esc(CONFIG.appName)}</h1><p class="sub">أدخل رقم هاتفك للدخول</p>
+    <form onsubmit="doLogin(event)">
+      <div class="field"><label>رقم الهاتف</label><input name="phone" inputmode="tel" required autocomplete="tel" placeholder="9xxxxxxx" ${S.pendingPhone ? 'value="' + esc(S.pendingPhone) + '" readonly' : ''}></div>
+      ${S.pendingPhone ? `<div class="field"><label>الاسم (أول دخول)</label><input name="name" required placeholder="الاسم الكامل"></div>` : ''}
+      <button class="btn primary" style="width:100%">${S.pendingPhone ? 'تسجيل والدخول' : 'دخول'}</button>
+      ${S.pendingPhone ? `<p class="muted" style="margin-top:10px">هذا الرقم غير مسجّل. اكتب اسمك ليظهر مع كل إدخال تقوم به.</p>` : ''}
+    </form></div></div>`;
+}
+async function doLogin(e) {
+  e.preventDefault();
+  const f = formData(e.target); const phone = f.phone.replace(/\D/g, '');
+  if (phone.length < 6) return toast('رقم غير صحيح');
+  let u = S.data.users.find(x => x.phone === phone);
+  if (!u) {
+    if (!f.name) { S.pendingPhone = phone; render(); return; }
+    const role = CONFIG.headPhones.includes(phone) || (!CONFIG.headPhones.length && !S.data.users.length) ? 'head' : 'secretary';
+    const id = await DB.add('users', { phone, name: f.name, role, createdAt: nowISO() });
+    u = { id, phone, name: f.name, role };
+    S.pendingPhone = null;
+  }
+  if (u.disabled) return toast('هذا الحساب موقوف');
+  S.user = u; localStorage.setItem('hd_session', phone); S.page = isHead() ? 'home' : 'entry'; render();
+}
+function logout() { localStorage.removeItem('hd_session'); S.user = null; S.page = 'home'; render(); }
+
+/* ========================================================
+   الصفحات — الرئيس
+   ======================================================== */
+function dutyNames(iso) { const ids = dutyOn(iso); return ids.length ? ids.map(id => `<span>${esc(detName(id))}</span>`).join('') : '<span class="none">لا يوجد جدول مدخل لهذا اليوم</span>'; }
+function home() {
+  const t = todayISO(); const tm = new Date(Date.now() + 864e5); const tomorrow = `${tm.getFullYear()}-${pad(tm.getMonth() + 1)}-${pad(tm.getDate())}`;
+  const alerts = buildAlerts().slice(0, 6);
+  const openCases = S.data.cases.filter(c => OPEN_STATUS.includes(c.status)).length;
+  return `
+  <section class="duty"><div class="d">محققو العمل اليوم</div><h1>${fmtLong(t)}</h1><div class="names">${dutyNames(t)}</div>
+    <div class="d" style="margin-top:18px">غداً — ${fmtLong(tomorrow)}</div><div class="names" style="margin-top:6px">${dutyNames(tomorrow)}</div></section>
+  <div class="grid3" style="margin-bottom:18px">
+    <div class="stat"><b>${S.data.detectives.length}</b><span>محقق</span></div>
+    <div class="stat"><b>${openCases}</b><span>قضية مفتوحة</span></div>
+    <div class="stat"><b>${alerts.length}</b><span>تنبيه يحتاج نظرك</span></div>
+  </div>
+  <div class="grid2">
+    <div class="panel"><h2>تنبيهات</h2>${alerts.length ? alerts.map(alertHtml).join('') : '<div class="empty">لا توجد تنبيهات الآن</div>'}${alerts.length ? `<button class="btn link" onclick="nav('activity')">كل التنبيهات والسجل</button>` : ''}</div>
+    <div class="panel"><h2>آخر إدخالات السكرتارية</h2>${activityList(S.data.activity.filter(a => a.role !== 'head').slice().sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8))}</div>
+  </div>
+  <div class="panel"><div class="head" style="margin-bottom:10px"><h2>جدول ${monthLabel(S.month)}</h2><button class="btn sm" onclick="nav('schedule')">تعديل الجدول</button></div>${calendar(S.month, false)}</div>`;
+}
+let alertFns = [];
+function alertHtml(a, i) { alertFns[i] = a.go; return `<div class="alert ${a.kind}"><div class="t"><b>${esc(a.title)}</b><span class="muted">${esc(a.text)}</span></div><button class="btn sm" onclick="alertFns[${i}]()">فتح</button></div>`; }
+function activityList(list) {
+  if (!list.length) return '<div class="empty">لا يوجد</div>';
+  const verb = { add: 'أضاف', update: 'عدّل', remove: 'حذف', request: 'طلب', approve: 'وافق', reject: 'رفض' };
+  return `<div class="tbl-wrap"><table><tbody>${list.map(a => `<tr><td style="width:150px"><span class="muted">${fmtTime(a.at)}</span>${a.role !== 'head' && a.at > S.lastSeen ? ' <span class="tag red">جديد</span>' : ''}</td><td><b>${esc(a.byName)}</b> ${verb[a.action] || a.action}: ${esc(a.summary)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---- المحققون ---- */
+function detectives() {
+  const y = todayISO().slice(0, 4), m = todayISO().slice(0, 7);
+  const rows = S.data.detectives.slice().sort((a, b) => a.name.localeCompare(b.name, 'ar')).map(d => {
+    const lc = leaveCounts(d.id, y), p = permStats(d.id, m), nl = nextLeave(d.id);
+    const open = S.data.cases.filter(c => c.detectiveId === d.id && OPEN_STATUS.includes(c.status)).length;
+    return `<tr class="click" onclick="S.detective='${d.id}';nav('detective')"><td><b>${esc(d.name)}</b><br><span class="muted">${esc(d.rank || '')}</span></td><td>${open}</td><td>${lc.annual}</td><td>${lc.sick}</td><td>${lc.emergency}</td><td>${p.count} / ${p.hours}س ${p.count >= PERM_MAX_COUNT || p.hours >= PERM_MAX_HOURS ? '<span class="tag red">الحد</span>' : ''}</td><td>${nl ? `${fmt(nl.from)} <span class="muted">${LEAVE_TYPES[nl.type]}</span>` : '—'}</td><td>${d.notes && d.notes.length ? `<span class="tag">${d.notes.length}</span>` : ''}${d.headNotes ? ' <span class="tag gold">خاصة</span>' : ''}</td></tr>`;
+  }).join('');
+  return `<div class="head"><div><h1>المحققون</h1><div class="sub">إجازات ${y} · الاستئذان لشهر ${monthLabel(m)}</div></div><button class="btn primary" onclick="detectiveForm()">إضافة محقق</button></div>
+  <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>المحقق</th><th>قضايا مفتوحة</th><th>دورية</th><th>طبية</th><th>طارئة</th><th>استئذان (مرات/ساعات)</th><th>الإجازة القادمة</th><th>ملاحظات</th></tr></thead><tbody>${rows || '<tr><td colspan="8"><div class="empty">أضف المحققين أولاً</div></td></tr>'}</tbody></table></div></div>`;
+}
+function detectiveForm(id) {
+  const d = id ? S.data.detectives.find(x => x.id === id) : {};
+  modal(`<h2>${id ? 'تعديل محقق' : 'محقق جديد'}</h2><form onsubmit="saveDetective(event,'${id || ''}')">
+    <div class="row"><div class="field"><label>الاسم</label><input name="name" required value="${esc(d.name)}"></div><div class="field"><label>الرتبة</label><input name="rank" value="${esc(d.rank)}"></div></div>
+    <div class="row"><div class="field"><label>الهاتف</label><input name="phone" value="${esc(d.phone)}"></div><div class="field"><label>الرقم الوظيفي</label><input name="empNo" value="${esc(d.empNo)}"></div></div>
+    <div class="actions"><button class="btn primary">حفظ</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button>${id ? `<button type="button" class="btn danger" style="margin-inline-start:auto" onclick="if(confirm('حذف المحقق؟'))write('detectives','remove','${id}',null,'محقق: ${esc(d.name)}').then(()=>{closeModal();nav('detectives')})">حذف</button>` : ''}</div></form>`);
+}
+async function saveDetective(e, id) { e.preventDefault(); const f = formData(e.target); await write('detectives', id ? 'update' : 'add', id, f, 'محقق: ' + f.name, id); closeModal(); render(); }
+function detectiveView() {
+  const d = S.data.detectives.find(x => x.id === S.detective); if (!d) return detectives();
+  const tab = S.tab.det || 'cases'; const y = todayISO().slice(0, 4), m = todayISO().slice(0, 7); const lc = leaveCounts(d.id, y), p = permStats(d.id, m);
+  const tabs = [['cases', 'القضايا'], ['leaves', 'الإجازات'], ['attendance', 'الحضور'], ['notes', 'ملاحظات وتنبيهات']];
+  let body = '';
+  if (tab === 'cases') body = caseTable(S.data.cases.filter(c => c.detectiveId === d.id), false) + `<div class="actions"><button class="btn primary" onclick="caseForm(null,'${d.id}')">إضافة قضية</button></div>`;
+  if (tab === 'leaves') body = leaveTable(S.data.leaves.filter(l => l.detectiveId === d.id), false) + `<div class="actions"><button class="btn primary" onclick="leaveForm(null,'${d.id}')">إضافة إجازة / استئذان</button></div>`;
+  if (tab === 'attendance') body = attTable(S.data.attendance.filter(a => a.detectiveId === d.id).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 60), false);
+  if (tab === 'notes') body = notesView(d);
+  return `<div class="head"><div><button class="btn link" onclick="nav('detectives')">← المحققون</button><h1>${esc(d.name)}</h1><div class="sub">${esc(d.rank || '')} ${d.phone ? '· ' + esc(d.phone) : ''}</div></div><button class="btn" onclick="detectiveForm('${d.id}')">تعديل البيانات</button></div>
+  <div class="grid3" style="margin-bottom:18px">
+    <div class="stat"><b>${lc.annual + lc.sick + lc.emergency}</b><span>إجازات ${y}: دورية ${lc.annual} · طبية ${lc.sick} · طارئة ${lc.emergency}</span></div>
+    <div class="stat"><b>${p.count} <small style="font-size:14px;font-weight:400">/ ${PERM_MAX_COUNT}</small></b><span>استئذان هذا الشهر — ${p.hours} من ${PERM_MAX_HOURS} ساعة</span></div>
+    <div class="stat"><b>${S.data.cases.filter(c => c.detectiveId === d.id && OPEN_STATUS.includes(c.status)).length}</b><span>قضايا مفتوحة من أصل ${S.data.cases.filter(c => c.detectiveId === d.id).length}</span></div>
+  </div>
+  <div class="panel"><div class="tabs">${tabs.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" onclick="S.tab.det='${k}';render()">${l}</button>`).join('')}</div>${body}</div>`;
+}
+function notesView(d) {
+  const notes = (d.notes || []).slice().sort((a, b) => (a.date || '9').localeCompare(b.date || '9'));
+  return `<div class="grid2">
+    <div><h3 style="margin-bottom:8px">ملاحظات وتنبيهات</h3><p class="muted">مثال: بعد أسبوع عنده موعد محكمة — أخذ رخصة مقابلة — موقوف. الملاحظة ذات التاريخ تظهر كتنبيه قبلها بأسبوع.</p>
+      ${notes.length ? notes.map(n => `<div class="alert ${n.date && daysUntil(n.date) <= 7 && daysUntil(n.date) >= 0 ? 'navy' : ''}"><div class="t"><b>${esc(n.text)}</b><span class="muted">${n.date ? fmt(n.date) + ' · ' : ''}${esc(n.by || '')}</span></div><button class="btn sm danger" onclick="removeNote('${d.id}','${n.id}')">حذف</button></div>`).join('') : '<div class="empty">لا توجد ملاحظات</div>'}
+      <form onsubmit="addNote(event,'${d.id}')" style="margin-top:12px"><div class="field"><label>ملاحظة جديدة</label><input name="text" required></div><div class="row"><div class="field"><label>تاريخ (اختياري — للتنبيه)</label><input type="date" name="date"></div><div class="field" style="align-self:flex-end"><button class="btn primary" style="width:100%">إضافة</button></div></div></form></div>
+    <div><h3 style="margin-bottom:8px">ملاحظات خاصة بالرئيس</h3><p class="muted">لا تظهر لأحد غيرك.</p><form onsubmit="saveHeadNotes(event,'${d.id}')"><textarea name="headNotes" style="min-height:160px">${esc(d.headNotes)}</textarea><div class="actions"><button class="btn primary">حفظ</button></div></form></div></div>`;
+}
+async function addNote(e, id) { e.preventDefault(); const f = formData(e.target); const d = S.data.detectives.find(x => x.id === id); const notes = (d.notes || []).concat({ id: 'n' + Date.now(), text: f.text, date: f.date || '', by: S.user.name, at: nowISO() }); await write('detectives', 'update', id, { notes }, `ملاحظة على ${d.name}: ${f.text}`, id); render(); }
+async function removeNote(id, nid) { const d = S.data.detectives.find(x => x.id === id); await write('detectives', 'update', id, { notes: (d.notes || []).filter(n => n.id !== nid) }, `حذف ملاحظة على ${d.name}`, id); render(); }
+async function saveHeadNotes(e, id) { e.preventDefault(); await DB.update('detectives', id, { headNotes: formData(e.target).headNotes }); toast('تم الحفظ'); }
+
+/* ---- القضايا ---- */
+function caseTable(list, showDet = true) {
+  if (!list.length) return '<div class="empty">لا توجد قضايا</div>';
+  list = list.slice().sort((a, b) => (b.important - a.important) || caseLastMove(b).date.localeCompare(caseLastMove(a).date));
+  return `<div class="tbl-wrap"><table><thead><tr><th>رقم القضية</th><th>العنوان</th>${showDet ? '<th>المحقق</th>' : ''}<th>القيد</th><th>تاريخ الرفع</th><th>آخر حركة</th><th>مرفقات</th></tr></thead><tbody>${list.map(c => { const lm = caseLastMove(c); const stale = OPEN_STATUS.includes(c.status) && lm.date && daysSince(lm.date) >= 7; return `<tr class="click ${c.important ? 'imp' : ''}" onclick="openCase('${c.id}')"><td><b>${esc(c.caseNo)}</b>${c.important ? ' <span class="tag gold">مهمة</span>' : ''}</td><td>${esc(c.title)}</td>${showDet ? `<td>${esc(detName(c.detectiveId))}</td>` : ''}<td><span class="tag ${c.status === 'مغلقة' || c.status === 'محفوظة' ? '' : 'navy'}">${esc(c.status)}</span></td><td>${fmt(c.filedDate)}</td><td>${fmt(lm.date)} ${lm.type ? `<span class="tag">${esc(lm.type)}</span>` : ''}${stale ? `<br><span class="tag red">بلا حركة ${daysSince(lm.date)} يوم</span>` : ''}</td><td>${(c.attachments || []).length || ''}</td></tr>`; }).join('')}</tbody></table></div>`;
+}
+function cases() {
+  const f = S.tab.caseFilter || 'open';
+  let list = S.data.cases; if (f === 'open') list = list.filter(c => OPEN_STATUS.includes(c.status)); if (f === 'stale') list = list.filter(c => OPEN_STATUS.includes(c.status) && daysSince(caseLastMove(c).date) >= 7); if (f === 'imp') list = list.filter(c => c.important);
+  const q = (S.tab.caseQ || '').trim(); if (q) list = list.filter(c => (c.caseNo + ' ' + c.title + ' ' + detName(c.detectiveId)).includes(q));
+  return `<div class="head"><div><h1>القضايا</h1><div class="sub">${S.data.cases.length} قضية</div></div><button class="btn primary" onclick="caseForm()">إضافة قضية</button></div>
+  <div class="panel"><div class="row" style="margin-bottom:12px"><div class="tabs" style="margin:0;border:0;flex:2">${[['open', 'المفتوحة'], ['stale', 'بلا حركة'], ['imp', 'المهمة'], ['all', 'الكل']].map(([k, l]) => `<button class="${f === k ? 'on' : ''}" onclick="S.tab.caseFilter='${k}';render()">${l}</button>`).join('')}</div><div><input placeholder="بحث برقم القضية أو العنوان أو المحقق" value="${esc(q)}" oninput="S.tab.caseQ=this.value;render();this.focus();this.setSelectionRange(this.value.length,this.value.length)"></div></div>${caseTable(list)}</div>`;
+}
+function detSelect(sel, name = 'detectiveId') { return `<select name="${name}" required><option value="">— اختر المحقق —</option>${S.data.detectives.map(d => `<option value="${d.id}" ${sel === d.id ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>`; }
+function caseForm(id, detId) {
+  const c = id ? S.data.cases.find(x => x.id === id) : { detectiveId: detId, filedDate: todayISO(), status: 'قيد التحقيق' };
+  modal(`<h2>${id ? 'تعديل قضية' : 'قضية جديدة'}</h2><form onsubmit="saveCase(event,'${id || ''}')">
+    <div class="row"><div class="field"><label>المحقق</label>${detSelect(c.detectiveId)}</div><div class="field"><label>رقم القضية</label><input name="caseNo" required value="${esc(c.caseNo)}"></div></div>
+    <div class="field"><label>عنوان القضية</label><input name="title" required value="${esc(c.title)}"></div>
+    <div class="row"><div class="field"><label>قيد القضية</label><select name="status">${CASE_STATUS.map(s => `<option ${c.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div><div class="field"><label>تاريخ الرفع</label><input type="date" name="filedDate" required value="${esc(c.filedDate)}"></div></div>
+    ${id ? '' : `<div class="row"><div class="field"><label>آخر حركة (اختياري)</label><input type="date" name="moveDate"></div><div class="field"><label>نوعها</label><select name="moveType"><option>صادر</option><option>وارد</option></select></div></div>`}
+    <div class="field"><label>ملاحظات</label><textarea name="notes">${esc(c.notes)}</textarea></div>
+    ${isHead() ? `<div class="field"><label class="chk"><input type="checkbox" name="important" ${c.important ? 'checked' : ''}> قضية مهمة (تمييز بلون)</label></div>` : ''}
+    ${id ? '' : `<div class="field"><label>مرفقات (مستندات أو صور)</label><input type="file" name="files" multiple></div>`}
+    <div class="actions"><button class="btn primary">حفظ</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button></div></form>`);
+}
+async function saveCase(e, id) {
+  e.preventDefault(); const form = e.target; const f = formData(form); const btn = form.querySelector('.primary'); btn.disabled = true;
+  const data = { detectiveId: f.detectiveId, caseNo: f.caseNo, title: f.title, status: f.status, filedDate: f.filedDate, notes: f.notes };
+  if (isHead()) data.important = !!f.important;
+  if (!id) { data.movements = f.moveDate ? [{ id: 'm' + Date.now(), date: f.moveDate, type: f.moveType, note: '', by: S.user.name }] : []; data.attachments = await uploadFiles(form.files.files, 'cases/' + f.caseNo); }
+  const nid = await write('cases', id ? 'update' : 'add', id, data, `قضية ${f.caseNo} — ${f.title} (${detName(f.detectiveId)})`, f.detectiveId);
+  closeModal(); if (isHead()) openCase(nid); else render();
+}
+function openCase(id) {
+  const c = S.data.cases.find(x => x.id === id); if (!c) return;
+  const own = !isHead() && c.createdBy === S.user.phone; const canEdit = isHead() || own;
+  const moves = (c.movements || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+  modal(`<div class="head" style="margin-bottom:10px"><div><h2 style="margin:0">${esc(c.caseNo)} — ${esc(c.title)}</h2><div class="sub">${esc(detName(c.detectiveId))} · <span class="tag navy">${esc(c.status)}</span> · رُفعت ${fmt(c.filedDate)}${c.important ? ' · <span class="tag gold">مهمة</span>' : ''}</div></div>${canEdit ? `<button class="btn sm" onclick="caseForm('${c.id}')">${isHead() ? 'تعديل' : 'طلب تعديل'}</button>` : ''}</div>
+    ${c.notes ? `<p>${esc(c.notes)}</p>` : ''}
+    <h3 style="margin:14px 0 6px">الحركة</h3>
+    ${moves.length ? `<div class="tbl-wrap"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>بيان</th><th></th></tr></thead><tbody>${moves.map(m => `<tr><td>${fmt(m.date)}</td><td><span class="tag">${esc(m.type)}</span></td><td>${esc(m.note)}<br><span class="muted">${esc(m.by || '')}</span></td><td>${isHead() ? `<button class="btn link sm" onclick="removeMove('${c.id}','${m.id}')">حذف</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<div class="muted">لا توجد حركات مسجلة</div>'}
+    <form onsubmit="addMove(event,'${c.id}')" class="row" style="margin-top:10px;align-items:flex-end"><div class="field"><label>تاريخ</label><input type="date" name="date" required value="${todayISO()}"></div><div class="field"><label>نوع</label><select name="type"><option>صادر</option><option>وارد</option></select></div><div class="field" style="flex:2"><label>بيان</label><input name="note"></div><div class="field" style="flex:0"><button class="btn primary">إضافة حركة</button></div></form>
+    <h3 style="margin:14px 0 6px">المرفقات</h3>
+    <div class="files">${(c.attachments || []).map(a => `<a href="${esc(a.url)}" target="_blank" rel="noopener">📄 ${esc(a.name)}</a>`).join('') || '<span class="muted">لا توجد مرفقات</span>'}</div>
+    <form onsubmit="addFiles(event,'${c.id}')" class="row" style="margin-top:8px;align-items:flex-end"><div class="field" style="flex:2"><input type="file" name="files" multiple required></div><div class="field" style="flex:0"><button class="btn">رفع</button></div></form>
+    <div class="muted" style="margin-top:12px">أدخلها: ${esc(c.createdByName || '')} · ${fmtTime(c.createdAt)}${c.updatedAt ? ' · آخر تعديل ' + fmtTime(c.updatedAt) : ''}</div>
+    <div class="actions"><button type="button" class="btn" onclick="closeModal()">إغلاق</button>${canEdit ? `<button type="button" class="btn danger" style="margin-inline-start:auto" onclick="if(confirm('${isHead() ? 'حذف القضية؟' : 'إرسال طلب حذف؟'}'))write('cases','remove','${c.id}',null,'قضية ${esc(c.caseNo)}','${c.detectiveId}').then(()=>{closeModal();render()})">${isHead() ? 'حذف' : 'طلب حذف'}</button>` : ''}</div>`);
+}
+async function addMove(e, id) { e.preventDefault(); const f = formData(e.target); const c = S.data.cases.find(x => x.id === id); const movements = (c.movements || []).concat({ id: 'm' + Date.now(), date: f.date, type: f.type, note: f.note, by: S.user.name });
+  // إضافة حركة تُعامل كإدخال بيانات: مسموحة للسكرتارية مباشرة
+  await DB.update('cases', id, { movements, updatedAt: nowISO(), updatedBy: S.user.phone }); await log('add', 'cases', id, `حركة ${f.type} ${fmt(f.date)} على قضية ${c.caseNo}${f.note ? ' — ' + f.note : ''}`, c.detectiveId); if (!isHead()) notifyHead(`${S.user.name} أضاف حركة ${f.type} على قضية ${c.caseNo}`); toast('تمت الإضافة'); openCase(id); render(); }
+async function removeMove(id, mid) { const c = S.data.cases.find(x => x.id === id); await write('cases', 'update', id, { movements: (c.movements || []).filter(m => m.id !== mid) }, `حذف حركة من قضية ${c.caseNo}`, c.detectiveId); openCase(id); render(); }
+async function addFiles(e, id) { e.preventDefault(); const c = S.data.cases.find(x => x.id === id); const btn = e.target.querySelector('button'); btn.disabled = true; btn.textContent = 'جارٍ الرفع…'; const added = await uploadFiles(e.target.files.files, 'cases/' + c.caseNo); if (added.length) { await DB.update('cases', id, { attachments: (c.attachments || []).concat(added), updatedAt: nowISO() }); await log('add', 'cases', id, `رفع ${added.length} مرفق على قضية ${c.caseNo}`, c.detectiveId); if (!isHead()) notifyHead(`${S.user.name} رفع مرفقات على قضية ${c.caseNo}`); toast('تم الرفع'); } openCase(id); render(); }
+
+/* ---- الإجازات ---- */
+function leaveTable(list, showDet = true) {
+  if (!list.length) return '<div class="empty">لا توجد سجلات</div>';
+  list = list.slice().sort((a, b) => b.from.localeCompare(a.from));
+  return `<div class="tbl-wrap"><table><thead><tr>${showDet ? '<th>المحقق</th>' : ''}<th>النوع</th><th>من</th><th>إلى / الساعات</th><th>ملاحظة</th><th>أدخلها</th><th></th></tr></thead><tbody>${list.map(l => `<tr>${showDet ? `<td>${esc(detName(l.detectiveId))}</td>` : ''}<td><span class="tag ${l.type === 'sick' ? 'red' : l.type === 'permission' ? 'gold' : l.type === 'emergency' ? 'navy' : ''}">${LEAVE_TYPES[l.type]}</span>${l.from > todayISO() ? ' <span class="tag">متوقعة</span>' : ''}</td><td>${fmt(l.from)}</td><td>${l.type === 'permission' ? (l.hours || 0) + ' ساعة' : fmt(l.to)}</td><td>${esc(l.note)}</td><td class="muted">${esc(l.createdByName || '')}</td><td>${isHead() || l.createdBy === S.user.phone ? `<button class="btn link sm" onclick="leaveForm('${l.id}')">${isHead() ? 'تعديل' : 'طلب تعديل'}</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function leaves() {
+  const f = S.tab.leaveType || 'all'; let list = S.data.leaves; if (f !== 'all') list = list.filter(l => l.type === f);
+  const upcoming = S.data.leaves.filter(l => l.type !== 'permission' && l.from > todayISO()).sort((a, b) => a.from.localeCompare(b.from));
+  return `<div class="head"><div><h1>الإجازات والطبيات</h1><div class="sub">الاستئذان: ${PERM_MAX_COUNT} مرات / ${PERM_MAX_HOURS} ساعة شهرياً</div></div><button class="btn primary" onclick="leaveForm()">إضافة</button></div>
+  <div class="panel"><h2>كشف الإجازات المتوقعة</h2>${upcoming.length ? `<div class="tbl-wrap"><table><thead><tr><th>المحقق</th><th>النوع</th><th>من</th><th>إلى</th><th>بعد</th></tr></thead><tbody>${upcoming.map(l => `<tr><td>${esc(detName(l.detectiveId))}</td><td>${LEAVE_TYPES[l.type]}</td><td>${fmt(l.from)}</td><td>${fmt(l.to)}</td><td>${daysUntil(l.from)} يوم</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">لا توجد إجازات قادمة مسجلة</div>'}</div>
+  <div class="panel"><div class="tabs">${[['all', 'الكل'], ['annual', 'دورية'], ['sick', 'طبية'], ['emergency', 'طارئة'], ['permission', 'استئذان']].map(([k, l]) => `<button class="${f === k ? 'on' : ''}" onclick="S.tab.leaveType='${k}';render()">${l}</button>`).join('')}</div>${leaveTable(list)}</div>`;
+}
+function leaveForm(id, detId) {
+  const l = id ? S.data.leaves.find(x => x.id === id) : { detectiveId: detId, type: 'annual', from: todayISO(), to: todayISO() };
+  modal(`<h2>${id ? 'تعديل' : 'إجازة / استئذان جديد'}</h2><form onsubmit="saveLeave(event,'${id || ''}')">
+    <div class="row"><div class="field"><label>المحقق</label>${detSelect(l.detectiveId)}</div><div class="field"><label>النوع</label><select name="type" onchange="this.form.querySelector('.to').style.display=this.value==='permission'?'none':'';this.form.querySelector('.hrs').style.display=this.value==='permission'?'':'none'">${Object.entries(LEAVE_TYPES).map(([k, v]) => `<option value="${k}" ${l.type === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div></div>
+    <div class="row"><div class="field"><label>من تاريخ</label><input type="date" name="from" required value="${esc(l.from)}"></div><div class="field to" ${l.type === 'permission' ? 'style="display:none"' : ''}><label>إلى تاريخ</label><input type="date" name="to" value="${esc(l.to)}"></div><div class="field hrs" ${l.type !== 'permission' ? 'style="display:none"' : ''}><label>عدد الساعات</label><input type="number" name="hours" min="0.5" step="0.5" value="${esc(l.hours || 2)}"></div></div>
+    <div class="field"><label>ملاحظة</label><input name="note" value="${esc(l.note)}"></div>
+    <div class="actions"><button class="btn primary">حفظ</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button>${id ? `<button type="button" class="btn danger" style="margin-inline-start:auto" onclick="if(confirm('حذف؟'))write('leaves','remove','${id}',null,'${LEAVE_TYPES[l.type]} ${esc(detName(l.detectiveId))} ${fmt(l.from)}','${l.detectiveId}').then(()=>{closeModal();render()})">${isHead() ? 'حذف' : 'طلب حذف'}</button>` : ''}</div></form>`);
+}
+async function saveLeave(e, id) { e.preventDefault(); const f = formData(e.target); const data = { detectiveId: f.detectiveId, type: f.type, from: f.from, to: f.type === 'permission' ? f.from : (f.to || f.from), hours: f.type === 'permission' ? +f.hours : 0, note: f.note };
+  if (data.type === 'permission') { const p = permStats(f.detectiveId, f.from.slice(0, 7)); if (p.count + 1 > PERM_MAX_COUNT || p.hours + data.hours > PERM_MAX_HOURS) toast(`تنبيه: ${detName(f.detectiveId)} تجاوز حد الاستئذان الشهري`); }
+  await write('leaves', id ? 'update' : 'add', id, data, `${LEAVE_TYPES[f.type]} — ${detName(f.detectiveId)} ${fmt(f.from)}${f.type === 'permission' ? ' (' + data.hours + ' ساعة)' : ' إلى ' + fmt(data.to)}`, f.detectiveId); closeModal(); render(); }
+
+/* ---- الحضور ---- */
+function attTable(list, showDet = true) {
+  if (!list.length) return '<div class="empty">لا توجد سجلات</div>';
+  return `<div class="tbl-wrap"><table><thead><tr><th>التاريخ</th>${showDet ? '<th>المحقق</th>' : ''}<th>الحالة</th><th>حضور</th><th>انصراف</th><th>ملاحظة</th><th>أدخلها</th><th></th></tr></thead><tbody>${list.map(a => `<tr><td>${fmt(a.date)}</td>${showDet ? `<td>${esc(detName(a.detectiveId))}</td>` : ''}<td><span class="tag ${a.status === 'غائب' ? 'red' : a.status === 'متأخر' ? 'gold' : a.status === 'حاضر' ? 'green' : ''}">${esc(a.status)}</span></td><td>${esc(a.in)}</td><td>${esc(a.out)}</td><td>${esc(a.note)}</td><td class="muted">${esc(a.createdByName || '')}</td><td>${isHead() || a.createdBy === S.user.phone ? `<button class="btn link sm" onclick="attEdit('${a.id}')">${isHead() ? 'تعديل' : 'طلب تعديل'}</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function attendance() {
+  const d = S.tab.attDate || todayISO(); const list = S.data.attendance.filter(a => a.date === d);
+  return `<div class="head"><div><h1>الحضور والانصراف</h1></div><div class="row" style="align-items:flex-end"><div class="field" style="margin:0"><input type="date" value="${d}" onchange="S.tab.attDate=this.value;render()"></div><button class="btn primary" onclick="attForm('${d}')">تسجيل اليوم</button></div></div>
+  <div class="panel"><h2>${fmtLong(d)}</h2>${attTable(list.slice().sort((a, b) => detName(a.detectiveId).localeCompare(detName(b.detectiveId), 'ar')))}</div>`;
+}
+function attForm(date) {
+  const done = new Set(S.data.attendance.filter(a => a.date === date).map(a => a.detectiveId));
+  const dets = S.data.detectives.filter(d => !done.has(d.id));
+  modal(`<h2>تسجيل الحضور</h2><form onsubmit="saveAtt(event)"><div class="field"><label>التاريخ</label><input type="date" name="date" required value="${date}"></div>
+  ${dets.length ? `<div class="tbl-wrap"><table><thead><tr><th>المحقق</th><th>الحالة</th><th>حضور</th><th>انصراف</th><th>ملاحظة</th></tr></thead><tbody>${dets.map(d => `<tr><td><label class="chk" style="border:0;padding:0"><input type="checkbox" name="sel_${d.id}" checked> ${esc(d.name)}</label></td><td><select name="st_${d.id}">${ATT_STATUS.map(s => `<option>${s}</option>`).join('')}</select></td><td><input type="time" name="in_${d.id}" value="07:30"></td><td><input type="time" name="out_${d.id}" value="14:00"></td><td><input name="nt_${d.id}"></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">تم تسجيل جميع المحققين لهذا اليوم</div>'}
+  <div class="actions"><button class="btn primary" ${dets.length ? '' : 'disabled'}>حفظ</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button></div></form>`);
+}
+async function saveAtt(e) { e.preventDefault(); const f = formData(e.target); let n = 0;
+  for (const d of S.data.detectives) { if (!f['sel_' + d.id]) continue; const st = f['st_' + d.id]; const data = { detectiveId: d.id, date: f.date, status: st, in: ['غائب', 'إجازة'].includes(st) ? '' : f['in_' + d.id], out: ['غائب', 'إجازة'].includes(st) ? '' : f['out_' + d.id], note: f['nt_' + d.id] }; await DB.add('attendance', { ...data, createdBy: S.user.phone, createdByName: S.user.name, createdAt: nowISO() }); n++; }
+  if (n) { await log('add', 'attendance', '', `حضور ${fmt(f.date)}: ${n} محقق`); if (!isHead()) notifyHead(`${S.user.name} سجّل حضور ${fmt(f.date)} (${n} محقق)`); toast('تم الحفظ'); } closeModal(); S.tab.attDate = f.date; render(); }
+function attEdit(id) { const a = S.data.attendance.find(x => x.id === id);
+  modal(`<h2>${esc(detName(a.detectiveId))} — ${fmt(a.date)}</h2><form onsubmit="saveAttEdit(event,'${id}')"><div class="row"><div class="field"><label>الحالة</label><select name="status">${ATT_STATUS.map(s => `<option ${a.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div><div class="field"><label>حضور</label><input type="time" name="in" value="${esc(a.in)}"></div><div class="field"><label>انصراف</label><input type="time" name="out" value="${esc(a.out)}"></div></div><div class="field"><label>ملاحظة</label><input name="note" value="${esc(a.note)}"></div>
+  <div class="actions"><button class="btn primary">حفظ</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button><button type="button" class="btn danger" style="margin-inline-start:auto" onclick="if(confirm('حذف؟'))write('attendance','remove','${id}',null,'حضور ${esc(detName(a.detectiveId))} ${fmt(a.date)}','${a.detectiveId}').then(()=>{closeModal();render()})">${isHead() ? 'حذف' : 'طلب حذف'}</button></div></form>`); }
+async function saveAttEdit(e, id) { e.preventDefault(); const a = S.data.attendance.find(x => x.id === id); const f = formData(e.target); await write('attendance', 'update', id, f, `حضور ${detName(a.detectiveId)} ${fmt(a.date)}: ${f.status}`, a.detectiveId); closeModal(); render(); }
+
+/* ---- جدول الأحوال الشهري ---- */
+function calendar(month, editable) {
+  const [y, m] = month.split('-').map(Number); const first = new Date(y, m - 1, 1).getDay(); const n = new Date(y, m, 0).getDate(); const s = scheduleFor(month) || { days: {} }; const t = todayISO();
+  let cells = DAYS.map(d => `<div class="h">${d}</div>`).join('');
+  for (let i = 0; i < first; i++) cells += '<div class="c off"></div>';
+  for (let d = 1; d <= n; d++) { const key = pad(d); const iso = `${month}-${key}`; const ids = s.days[key] || []; const wd = new Date(y, m - 1, d).getDay();
+    cells += `<div class="c ${iso === t ? 'today' : ''} ${editable ? 'edit' : ''} ${wd === 5 || wd === 6 ? 'off' : ''}" ${editable ? `onclick="dayEdit('${month}','${key}')"` : ''}><div class="n">${d}</div>${ids.slice(0, 4).map(id => `<span class="p">${esc(detName(id))}</span>`).join('')}${ids.length > 4 ? `<span class="p more">+${ids.length - 4}</span>` : ''}</div>`; }
+  return `<div class="cal">${cells}</div>`;
+}
+function schedule() {
+  const s = scheduleFor(S.month);
+  return `<div class="head"><div><h1>جدول الأحوال</h1><div class="sub">اضغط على أي يوم لتحديد محققي العمل. صوّر الجدول الورقي الشهري وأرفقه للرجوع إليه.</div></div><div class="row" style="align-items:center"><button class="btn sm" onclick="S.month=shiftMonth(S.month,-1);render()">‹ السابق</button><b>${monthLabel(S.month)}</b><button class="btn sm" onclick="S.month=shiftMonth(S.month,1);render()">التالي ›</button></div></div>
+  <div class="panel">${calendar(S.month, true)}
+    <div class="actions"><button class="btn" onclick="copyPrevMonth()">نسخ جدول الشهر السابق</button><button class="btn" onclick="fillWeekdays()">تعيين الجميع لكل أيام العمل</button><button class="btn danger" onclick="if(confirm('مسح جدول الشهر؟'))saveSchedule('${S.month}',{})">مسح الشهر</button></div></div>
+  <div class="panel"><h2>صورة الجدول الورقي</h2>${s && s.imageUrl ? `<a href="${esc(s.imageUrl)}" target="_blank" rel="noopener"><img src="${esc(s.imageUrl)}" alt="جدول ${monthLabel(S.month)}" style="max-width:100%;max-height:420px;border-radius:6px;border:1px solid var(--line)"></a><p class="muted">${esc(s.imageName || '')}</p>` : '<p class="muted">لم تُرفع صورة لهذا الشهر</p>'}
+    <form onsubmit="uploadSchedImg(event)" class="row" style="align-items:flex-end"><div class="field" style="flex:2"><input type="file" name="img" accept="image/*,.pdf" required></div><div class="field" style="flex:0"><button class="btn">رفع</button></div></form></div>`;
+}
+function dayEdit(month, key) {
+  const s = scheduleFor(month) || { days: {} }; const ids = s.days[key] || []; const iso = `${month}-${key}`;
+  modal(`<h2>${fmtLong(iso)}</h2><form onsubmit="saveDay(event,'${month}','${key}')">${S.data.detectives.map(d => `<label class="chk"><input type="checkbox" name="ids[]" value="${d.id}" ${ids.includes(d.id) ? 'checked' : ''}> ${esc(d.name)}</label>`).join('') || '<div class="empty">أضف المحققين أولاً</div>'}
+  <div class="actions"><button class="btn primary">حفظ</button><button type="button" class="btn" onclick="closeModal()">إلغاء</button></div></form>`);
+}
+async function saveSchedule(month, days, extra = {}) { const s = scheduleFor(month); if (s) await DB.update('schedules', s.id, { days, ...extra, updatedAt: nowISO(), updatedBy: S.user.phone }); else await DB.add('schedules', { month, days, ...extra, createdAt: nowISO(), createdBy: S.user.phone }); render(); }
+async function saveDay(e, month, key) { e.preventDefault(); const f = formData(e.target); const s = scheduleFor(month) || { days: {} }; const days = { ...s.days, [key]: f.ids || [] }; await log('update', 'schedules', month, `جدول ${fmt(month + '-' + key)}: ${(f.ids || []).map(detName).join('، ') || 'لا أحد'}`); closeModal(); await saveSchedule(month, days); toast('تم الحفظ'); }
+async function copyPrevMonth() { const p = scheduleFor(shiftMonth(S.month, -1)); if (!p) return toast('لا يوجد جدول للشهر السابق'); await saveSchedule(S.month, { ...p.days }); toast('تم النسخ'); }
+async function fillWeekdays() { const [y, m] = S.month.split('-').map(Number); const n = new Date(y, m, 0).getDate(); const all = S.data.detectives.map(d => d.id); const days = {}; for (let d = 1; d <= n; d++) { const wd = new Date(y, m - 1, d).getDay(); if (wd !== 5 && wd !== 6) days[pad(d)] = all; } await saveSchedule(S.month, days); }
+async function uploadSchedImg(e) { e.preventDefault(); const f = e.target.img.files; const up = await uploadFiles(f, 'schedules/' + S.month); if (!up.length) return; const s = scheduleFor(S.month) || { days: {} }; await saveSchedule(S.month, s.days, { imageUrl: up[0].url, imageName: up[0].name }); toast('تم الرفع'); }
+
+/* ---- طلبات التعديل ---- */
+const FIELD_AR = { detectiveId: 'المحقق', caseNo: 'رقم القضية', title: 'العنوان', status: 'الحالة', filedDate: 'تاريخ الرفع', notes: 'ملاحظات', type: 'النوع', from: 'من', to: 'إلى', hours: 'الساعات', note: 'ملاحظة', in: 'حضور', out: 'انصراف', name: 'الاسم', rank: 'الرتبة', phone: 'الهاتف', empNo: 'الرقم الوظيفي' };
+function approvals() {
+  const list = S.data.requests.slice().sort((a, b) => b.at.localeCompare(a.at)); const pend = list.filter(r => r.status === 'pending'); const old = list.filter(r => r.status !== 'pending').slice(0, 30);
+  const item = r => { const cur = (S.data[r.col] || []).find(d => d.id === r.docId) || {}; const diff = r.action === 'update' ? Object.entries(r.changes).filter(([k, v]) => String(cur[k] ?? '') !== String(v ?? '')).map(([k, v]) => `<div><b>${FIELD_AR[k] || k}:</b> <s>${esc(k === 'detectiveId' ? detName(cur[k]) : (k === 'type' ? LEAVE_TYPES[cur[k]] || cur[k] : cur[k]))}</s> ← ${esc(k === 'detectiveId' ? detName(v) : (k === 'type' ? LEAVE_TYPES[v] || v : v))}</div>`).join('') : '';
+    return `<div class="alert ${r.status === 'pending' ? 'gold' : ''}"><div class="t"><b>${r.action === 'remove' ? 'حذف' : 'تعديل'}: ${esc(r.summary)}</b><span class="muted">${esc(r.byName)} · ${fmtTime(r.at)}${r.status !== 'pending' ? ' · ' + (r.status === 'approved' ? 'تمت الموافقة' : 'مرفوض') : ''}</span>${diff ? `<div class="diff">${diff}</div>` : ''}${!cur.id && r.status === 'pending' ? '<span class="tag red">السجل الأصلي لم يعد موجوداً</span>' : ''}</div>${r.status === 'pending' ? `<div style="display:flex;flex-direction:column;gap:6px"><button class="btn sm primary" onclick="decide('${r.id}',true)">موافقة</button><button class="btn sm" onclick="decide('${r.id}',false)">رفض</button></div>` : ''}</div>`; };
+  return `<div class="head"><div><h1>طلبات التعديل</h1><div class="sub">تعديلات وحذف السكرتارية لا تُنفَّذ إلا بموافقتك</div></div></div>
+  <div class="panel"><h2>بانتظار الموافقة (${pend.length})</h2>${pend.map(item).join('') || '<div class="empty">لا توجد طلبات معلقة</div>'}</div>
+  <div class="panel"><h2>سابقة</h2>${old.map(item).join('') || '<div class="empty">—</div>'}</div>`;
+}
+async function decide(id, ok) { const r = S.data.requests.find(x => x.id === id);
+  if (ok) { const exists = (S.data[r.col] || []).some(d => d.id === r.docId); if (exists) { if (r.action === 'update') await DB.update(r.col, r.docId, { ...r.changes, updatedAt: nowISO(), updatedBy: r.by }); if (r.action === 'remove') await DB.remove(r.col, r.docId); } }
+  await DB.update('requests', id, { status: ok ? 'approved' : 'rejected', decidedAt: nowISO(), decidedBy: S.user.phone }); await log(ok ? 'approve' : 'reject', r.col, r.docId, r.summary + ' (طلب ' + r.byName + ')', r.detectiveId); toast(ok ? 'تمت الموافقة والتنفيذ' : 'تم الرفض'); render(); }
+
+/* ---- التنبيهات والسجل ---- */
+function activity() {
+  const alerts = buildAlerts(); const list = S.data.activity.slice().sort((a, b) => b.at.localeCompare(a.at)).slice(0, 200);
+  return `<div class="head"><div><h1>التنبيهات والسجل</h1></div><button class="btn" onclick="S.lastSeen=nowISO();localStorage.setItem('hd_seen',S.lastSeen);render()">تعليم الكل كمقروء</button></div>
+  <div class="panel"><h2>تنبيهات (${alerts.length})</h2>${alerts.map(alertHtml).join('') || '<div class="empty">لا توجد تنبيهات</div>'}</div>
+  <div class="panel"><h2>سجل الإدخالات</h2><p class="muted">كل إدخال أو تعديل مع اسم من قام به ووقته.</p>${activityList(list)}</div>`;
+}
+
+/* ---- المستخدمون ---- */
+function users() {
+  return `<div class="head"><div><h1>المستخدمون</h1><div class="sub">يسجّل كل شخص برقم هاتفه واسمه عند أول دخول. الرئيس يملك كل الصلاحيات؛ السكرتارية إدخال فقط.</div></div></div>
+  <div class="panel"><div class="tbl-wrap"><table><thead><tr><th>الاسم</th><th>الهاتف</th><th>الصلاحية</th><th>مسجّل منذ</th><th>إدخالات</th><th></th></tr></thead><tbody>${S.data.users.map(u => `<tr><td><b>${esc(u.name)}</b>${u.disabled ? ' <span class="tag red">موقوف</span>' : ''}</td><td>${esc(u.phone)}</td><td><select style="width:auto" onchange="DB.update('users','${u.id}',{role:this.value}).then(render)" ${u.id === S.user.id ? 'disabled' : ''}><option value="head" ${u.role === 'head' ? 'selected' : ''}>رئيس</option><option value="secretary" ${u.role === 'secretary' ? 'selected' : ''}>سكرتارية</option></select></td><td>${fmt(u.createdAt)}</td><td>${S.data.activity.filter(a => a.by === u.phone).length}</td><td>${u.id !== S.user.id ? `<button class="btn link sm" onclick="DB.update('users','${u.id}',{disabled:${!u.disabled}}).then(render)">${u.disabled ? 'تفعيل' : 'إيقاف'}</button>` : ''}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+
+/* ========================================================
+   الصفحات — السكرتارية
+   ======================================================== */
+function entry() {
+  return `<div class="head"><div><h1>إدخال بيانات</h1><div class="sub">كل ما تدخله يظهر للرئيس باسمك فوراً. التعديل على سجل محفوظ يحتاج موافقة الرئيس.</div></div></div>
+  <div class="grid2">
+    <div class="panel"><h2>قضية جديدة</h2><p class="muted">رقم القضية وعنوانها، المحقق، القيد، تاريخ الرفع، والمرفقات.</p><button class="btn primary" onclick="caseForm()">إضافة قضية</button></div>
+    <div class="panel"><h2>حركة أو مرفق على قضية</h2><p class="muted">صادر / وارد بالتاريخ، أو رفع مستندات.</p><form onsubmit="event.preventDefault();openCaseByNo(this.q.value)" class="row" style="align-items:flex-end"><div class="field"><label>رقم القضية</label><input name="q" required list="caseNos"></div><div class="field" style="flex:0"><button class="btn">فتح</button></div></form><datalist id="caseNos">${S.data.cases.map(c => `<option value="${esc(c.caseNo)}">`).join('')}</datalist></div>
+    <div class="panel"><h2>إجازة / طبية / استئذان</h2><p class="muted">تُحسب تلقائياً في كشف المحقق.</p><button class="btn primary" onclick="leaveForm()">إضافة</button></div>
+    <div class="panel"><h2>الحضور والانصراف</h2><p class="muted">تسجيل جميع المحققين ليوم واحد دفعة واحدة.</p><button class="btn primary" onclick="attForm('${todayISO()}')">تسجيل اليوم</button></div>
+  </div>`;
+}
+function openCaseByNo(no) { const c = S.data.cases.find(x => x.caseNo === no.trim()); if (!c) return toast('لم يُعثر على قضية بهذا الرقم'); openCase(c.id); }
+function mine() {
+  const me = S.user.phone; const tab = S.tab.mine || 'cases';
+  const tabs = [['cases', 'قضايا'], ['leaves', 'إجازات'], ['attendance', 'حضور'], ['requests', 'طلباتي']];
+  let body = '';
+  if (tab === 'cases') body = caseTable(S.data.cases.filter(c => c.createdBy === me));
+  if (tab === 'leaves') body = leaveTable(S.data.leaves.filter(l => l.createdBy === me));
+  if (tab === 'attendance') body = attTable(S.data.attendance.filter(a => a.createdBy === me).slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 100));
+  if (tab === 'requests') { const rs = S.data.requests.filter(r => r.by === me).sort((a, b) => b.at.localeCompare(a.at)); body = rs.length ? rs.map(r => `<div class="alert ${r.status === 'pending' ? 'gold' : r.status === 'approved' ? 'navy' : 'red'}"><div class="t"><b>${esc(r.summary)}</b><span class="muted">${fmtTime(r.at)} · ${r.status === 'pending' ? 'بانتظار الرئيس' : r.status === 'approved' ? 'تمت الموافقة' : 'مرفوض'}</span></div></div>`).join('') : '<div class="empty">لا توجد طلبات</div>'; }
+  return `<div class="head"><div><h1>إدخالاتي</h1><div class="sub">ما أدخلته بنفسك فقط</div></div></div><div class="panel"><div class="tabs">${tabs.map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" onclick="S.tab.mine='${k}';render()">${l}</button>`).join('')}</div>${body}</div>`;
+}
+
+/* ========================================================
+   التشغيل
+   ======================================================== */
+(async function init() {
+  S.month = todayISO().slice(0, 7);
+  $('#app').innerHTML = '<div class="login"><div class="muted">جارٍ التحميل…</div></div>';
+  try { await DB.init(); } catch (e) { $('#app').innerHTML = `<div class="login"><div class="box"><h2>تعذّر الاتصال بـ Firebase</h2><p class="muted">${esc(e.message || e)}</p></div></div>`; return; }
+  let first = true;
+  COLS.forEach(c => DB.subscribe(c, list => {
+    S.data[c] = list;
+    if (c === 'users') { const ph = localStorage.getItem('hd_session'); if (ph) { const u = list.find(x => x.phone === ph); if (u && !u.disabled) { S.user = u; if (first) { S.page = u.role === 'head' ? 'home' : 'entry'; first = false; } } else S.user = null; } }
+    if (!$('.ov')) render();
+  }));
+  render();
+})();
+</script>
+</body>
+</html>
