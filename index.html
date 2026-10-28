@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>مكتب رئيس التحقيق</title>
+<meta name="theme-color" content="#1E3A5F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="رئيس التحقيق">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -75,15 +82,35 @@ label{display:block;font-size:13px;color:var(--ink-2);margin-bottom:4px}
 .main{padding:26px 30px 60px;min-width:0}
 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .head .sub{color:var(--ink-3);font-size:14px}
-.topbar{display:none}
+.appbar,.tabbar{display:none}
+.install{display:none}
 @media (max-width:860px){
   .shell{grid-template-columns:1fr}
   .side{display:none}
-  .topbar{display:flex;gap:6px;overflow-x:auto;padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
-  .topbar button{white-space:nowrap;border:1px solid var(--line);background:var(--paper);padding:6px 11px;border-radius:20px;font-size:13px;color:var(--ink-2)}
-  .topbar button.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .main{padding:16px 14px 60px}
+  .appbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+  .appbar b{font-size:16px;display:block}.appbar span{font-size:12px;color:var(--ink-3)}
+  .main{padding:16px 14px calc(96px + env(safe-area-inset-bottom,0px))}
+  .tabbar{display:flex;position:fixed;bottom:0;inset-inline:0;background:var(--panel);border-top:1px solid var(--line);padding:6px 4px calc(8px + env(safe-area-inset-bottom,0px));z-index:6}
+  .tabbar button{flex:1;background:none;border:none;color:var(--ink-3);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;position:relative}
+  .tabbar button i{font-style:normal;font-size:22px;line-height:1}
+  .tabbar button.on{color:var(--navy);font-weight:600}
+  .tabbar .cnt{position:absolute;top:-2px;inset-inline-end:calc(50% - 22px);background:var(--red);color:#fff;font-size:10px;padding:0 5px;border-radius:9px;min-width:16px;text-align:center}
+  .head{flex-direction:column;align-items:stretch}.head .btn.primary{width:100%}.head .row{justify-content:space-between}
+  h1{font-size:22px}
+  .install{display:flex;gap:10px;align-items:center;background:var(--navy-soft);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;font-size:13px;margin-bottom:14px}
+  .install .t{flex:1}
+  table.cards thead{display:none}
+  table.cards tbody tr{display:block;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin-bottom:8px;background:var(--panel)}
+  table.cards tbody tr.imp{background:var(--gold-soft)}
+  table.cards td{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border:0;padding:3px 0;font-size:14px}
+  table.cards td::before{content:attr(data-label);color:var(--ink-3);font-size:12px;flex-shrink:0}
+  table.cards td:first-child{font-size:15px;padding-bottom:6px;border-bottom:1px solid var(--line-2);margin-bottom:4px}
+  table.cards td:empty{display:none}
+  .sheet{position:fixed;inset:auto 0 0 0;background:var(--panel);border-radius:14px 14px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));z-index:21}
+  .sheet button.item{display:flex;width:100%;justify-content:space-between;align-items:center;background:none;border:none;border-bottom:1px solid var(--line-2);padding:13px 4px;color:var(--ink);font-size:15px;text-align:start}
 }
+.notif{display:flex;gap:10px;align-items:center;background:var(--gold-soft);border:1px solid var(--gold);border-radius:var(--r);padding:10px 12px;font-size:13px;margin-bottom:14px}
+.notif .t{flex:1}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--panel);z-index:10}
 
 /* panels / tables */
@@ -175,6 +202,8 @@ const CONFIG = {
   // أرقام هواتف من يحصل على صلاحية "رئيس التحقيق" عند التسجيل.
   // إذا تركتها فارغة: أول من يسجّل يصبح الرئيس.
   headPhones: [],
+  // مفتاح Web Push (VAPID) من Firebase: Project settings → Cloud Messaging → Web Push certificates
+  fcmVapidKey: "",
   // اختياري: إشعار تلجرام للرئيس عند كل إدخال من السكرتارية
   telegram: { botToken: "", chatId: "" }
 };
@@ -212,6 +241,7 @@ const DB = (() => {
       await load(base + 'firebase-auth-compat.min.js');
       await load(base + 'firebase-firestore-compat.min.js');
       await load(base + 'firebase-storage-compat.min.js');
+      try { await load(base + 'firebase-messaging-compat.min.js'); } catch (e) {}
       firebase.initializeApp(CONFIG.firebase);
       // دخول مجهول صامت حتى تسمح قواعد Firestore/Storage بطلب auth فقط
       await firebase.auth().signInAnonymously();
@@ -254,7 +284,7 @@ const PERM_MAX_COUNT = 4, PERM_MAX_HOURS = 12;
 
 let toastT;
 function toast(msg) { let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); } t.textContent = msg; clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3200); }
-function modal(html) { closeModal(); const ov = document.createElement('div'); ov.className = 'ov'; ov.innerHTML = `<div class="md" role="dialog">${html}</div>`; ov.addEventListener('click', e => { if (e.target === ov) closeModal(); }); document.body.appendChild(ov); const f = ov.querySelector('input,select,textarea'); if (f) f.focus(); }
+function modal(html) { closeModal(); const ov = document.createElement('div'); ov.className = 'ov'; ov.innerHTML = `<div class="md" role="dialog">${html}</div>`; ov.addEventListener('click', e => { if (e.target === ov) closeModal(); }); document.body.appendChild(ov); labelTables(ov); const f = ov.querySelector('input,select,textarea'); if (f && window.innerWidth > 860) f.focus(); }
 function closeModal() { const o = $('.ov'); if (o) o.remove(); }
 function formData(form) { const o = {}; new FormData(form).forEach((v, k) => { if (k.endsWith('[]')) { (o[k.slice(0, -2)] = o[k.slice(0, -2)] || []).push(v); } else o[k] = typeof v === 'string' ? v.trim() : v; }); form.querySelectorAll('input[type=checkbox]').forEach(c => { if (c.name) o[c.name] = c.checked; }); return o; }
 
@@ -351,18 +381,96 @@ function render() {
   const pages = isHead() ? HEAD_PAGES : SEC_PAGES;
   const counts = { approvals: isHead() ? S.data.requests.filter(r => r.status === 'pending').length : 0, activity: isHead() ? unreadCount() : 0 };
   const navHtml = pages.map(([k, l]) => `<button class="${S.page === k ? 'on' : ''}" onclick="nav('${k}')">${l}${counts[k] ? `<span class="cnt">${counts[k]}</span>` : ''}</button>`).join('');
+  const mainTabs = isHead() ? [['home', 'الرئيسية', '⌂'], ['detectives', 'المحققون', '👤'], ['cases', 'القضايا', '📁'], ['leaves', 'الإجازات', '🗓']] : [['entry', 'إدخال', '＋'], ['mine', 'إدخالاتي', '📋']];
+  const moreCnt = counts.approvals + counts.activity;
+  const inMore = !mainTabs.some(t => t[0] === S.page);
+  const tabHtml = mainTabs.map(([k, l, i]) => `<button class="${S.page === k ? 'on' : ''}" onclick="nav('${k}')"><i>${i}</i>${l}</button>`).join('') + `<button class="${inMore ? 'on' : ''}" onclick="moreSheet()"><i>☰</i>المزيد${moreCnt ? `<span class="cnt">${moreCnt}</span>` : ''}</button>`;
+  const pageName = (pages.find(p => p[0] === S.page) || [])[1] || (S.page === 'detective' ? 'المحققون' : '');
   app.innerHTML = `
   <div class="shell">
     <aside class="side">
       <div class="brand"><b>${esc(CONFIG.appName)}</b><span>${isHead() ? 'لوحة رئيس التحقيق' : 'إدخال السكرتارية'}</span></div>
       <nav class="nav">${navHtml}</nav>
-      <div class="me"><b>${esc(S.user.name)}</b>${esc(S.user.phone)} · ${isHead() ? 'رئيس' : 'سكرتارية'}<br><button class="btn link" onclick="logout()">تسجيل الخروج</button>${DB.demo ? ' · <button class="btn link" onclick="DB.reset()">مسح البيانات التجريبية</button>' : ''}</div>
+      <div class="me"><b>${esc(S.user.name)}</b>${esc(S.user.phone)} · ${isHead() ? 'رئيس' : 'سكرتارية'}<br>${notifEnabled() ? '' : '<button class="btn link" onclick="PUSH.enable()">تفعيل الإشعارات</button> · '}<button class="btn link" onclick="logout()">تسجيل الخروج</button>${DB.demo ? ' · <button class="btn link" onclick="DB.reset()">مسح البيانات التجريبية</button>' : ''}</div>
     </aside>
     <div>
-      <div class="topbar">${navHtml}</div>
-      <main class="main">${DB.demo ? '<div class="notice">وضع تجريبي: البيانات محفوظة في هذا المتصفح فقط. أضف بيانات Firebase في أعلى الملف لتشغيله فعلياً.</div>' : ''}${pageView()}</main>
+      <div class="appbar"><div><b>${esc(pageName || CONFIG.appName)}</b><span>${esc(S.user.name)} · ${isHead() ? 'رئيس التحقيق' : 'سكرتارية'}</span></div></div>
+      <main class="main">${DB.demo ? '<div class="notice">وضع تجريبي: البيانات محفوظة في هذا المتصفح فقط. أضف بيانات Firebase في أعلى الملف لتشغيله فعلياً.</div>' : ''}${installBanner()}${notifBanner()}${pageView()}</main>
+      <nav class="tabbar">${tabHtml}</nav>
     </div>
   </div>`;
+  labelTables();
+}
+function labelTables(root = document) {
+  root.querySelectorAll('table').forEach(t => {
+    if (t.closest('.md form')) return;
+    const ths = [...t.querySelectorAll('thead th')].map(h => h.textContent.trim()); if (!ths.length) return;
+    t.classList.add('cards');
+    t.querySelectorAll('tbody tr').forEach(tr => [...tr.children].forEach((td, i) => td.setAttribute('data-label', ths[i] || '')));
+  });
+}
+function moreSheet() {
+  const pages = isHead() ? HEAD_PAGES.slice(4) : [];
+  const counts = { approvals: isHead() ? S.data.requests.filter(r => r.status === 'pending').length : 0, activity: isHead() ? unreadCount() : 0 };
+  closeModal(); const ov = document.createElement('div'); ov.className = 'ov'; ov.style.alignItems = 'flex-end'; ov.style.padding = '0';
+  ov.innerHTML = `<div class="sheet" style="width:100%">${pages.map(([k, l]) => `<button class="item" onclick="closeModal();nav('${k}')">${l}${counts[k] ? `<span class="cnt" style="position:static;background:var(--red);color:#fff;font-size:12px;padding:0 7px;border-radius:10px">${counts[k]}</span>` : ''}</button>`).join('')}
+    ${PUSH.supported ? `<button class="item" onclick="closeModal();PUSH.enable()">${notifEnabled() ? 'الإشعارات مفعّلة ✓' : 'تفعيل الإشعارات'}</button>` : ''}
+    <button class="item" onclick="closeModal();logout()" style="color:var(--red);border:0">تسجيل الخروج</button></div>`;
+  ov.addEventListener('click', e => { if (e.target === ov) closeModal(); }); document.body.appendChild(ov);
+}
+/* ---- التثبيت على الشاشة الرئيسية والإشعارات ---- */
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; if (S.user) render(); });
+function installBanner() {
+  if (isStandalone() || localStorage.getItem('hd_noinstall')) return '';
+  if (isIOS()) return `<div class="install"><div class="t"><b>ثبّت التطبيق على الشاشة الرئيسية</b><br>اضغط زر المشاركة <span style="font-size:16px">⎙</span> في Safari ثم «إضافة إلى الشاشة الرئيسية». الإشعارات تعمل فقط من النسخة المثبتة.</div><button class="btn sm" onclick="localStorage.setItem('hd_noinstall','1');render()">إخفاء</button></div>`;
+  if (installPrompt) return `<div class="install"><div class="t"><b>ثبّت التطبيق على الهاتف</b></div><button class="btn sm primary" onclick="installPrompt.prompt();installPrompt=null;render()">تثبيت</button><button class="btn sm" onclick="localStorage.setItem('hd_noinstall','1');render()">إخفاء</button></div>`;
+  return '';
+}
+const notifEnabled = () => PUSH.supported && Notification.permission === 'granted' && localStorage.getItem('hd_notif') === '1';
+function notifBanner() {
+  if (!isHead() || !PUSH.supported || notifEnabled() || Notification.permission === 'denied' || localStorage.getItem('hd_nonotif')) return '';
+  if (isIOS() && !isStandalone()) return '';
+  return `<div class="notif"><div class="t"><b>فعّل الإشعارات</b><br>لتصلك كل إدخالات السكرتارية وطلبات التعديل فوراً.</div><button class="btn sm primary" onclick="PUSH.enable()">تفعيل</button><button class="btn sm" onclick="localStorage.setItem('hd_nonotif','1');render()">لاحقاً</button></div>`;
+}
+const PUSH = {
+  supported: 'Notification' in window && 'serviceWorker' in navigator,
+  async enable() {
+    if (!PUSH.supported) return toast('المتصفح لا يدعم الإشعارات');
+    if (isIOS() && !isStandalone()) return toast('على الآيفون: ثبّت التطبيق على الشاشة الرئيسية أولاً');
+    const p = await Notification.requestPermission();
+    if (p !== 'granted') return toast('لم يُسمح بالإشعارات');
+    localStorage.setItem('hd_notif', '1'); S.notifiedAt = nowISO();
+    await PUSH.registerFCM();
+    PUSH.show('الإشعارات مفعّلة', 'ستصلك تنبيهات إدخالات السكرتارية وطلبات التعديل');
+    render();
+  },
+  async registerFCM() {
+    if (DB.demo || !CONFIG.fcmVapidKey || !window.firebase || !firebase.messaging) return;
+    try {
+      if (!(await firebase.messaging.isSupported())) return;
+      const reg = await navigator.serviceWorker.ready; const m = firebase.messaging();
+      const token = await m.getToken({ vapidKey: CONFIG.fcmVapidKey, serviceWorkerRegistration: reg });
+      if (token && S.user) { const tokens = Array.from(new Set((S.user.fcmTokens || []).concat(token))); if (tokens.length !== (S.user.fcmTokens || []).length) await DB.update('users', S.user.id, { fcmTokens: tokens }); }
+      m.onMessage(p => PUSH.show((p.notification || {}).title || 'تنبيه', (p.notification || {}).body || ''));
+    } catch (e) { console.warn('FCM', e); }
+  },
+  async show(title, body) {
+    if (Notification.permission !== 'granted') return;
+    try { const reg = await navigator.serviceWorker.ready; await reg.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', dir: 'rtl', lang: 'ar', tag: 'hd-' + Date.now() }); }
+    catch (e) { try { new Notification(title, { body }); } catch (_) {} }
+  }
+};
+// إشعار محلي عند وصول إدخال جديد والتطبيق مفتوح (يعمل حتى بدون Cloud Functions)
+function localNotify(list) {
+  if (!S.user || !isHead() || !notifEnabled()) return;
+  if (!S.notifiedAt) { S.notifiedAt = nowISO(); return; }
+  const fresh = list.filter(a => a.role !== 'head' && a.by !== S.user.phone && a.at > S.notifiedAt);
+  if (!fresh.length) return;
+  S.notifiedAt = nowISO();
+  fresh.slice(0, 3).forEach(a => PUSH.show(a.byName, a.summary));
 }
 function pageView() {
   const p = S.page;
@@ -397,7 +505,7 @@ async function doLogin(e) {
     S.pendingPhone = null;
   }
   if (u.disabled) return toast('هذا الحساب موقوف');
-  S.user = u; localStorage.setItem('hd_session', phone); S.page = isHead() ? 'home' : 'entry'; render();
+  S.user = u; localStorage.setItem('hd_session', phone); S.page = isHead() ? 'home' : 'entry'; render(); if (notifEnabled()) PUSH.registerFCM();
 }
 function logout() { localStorage.removeItem('hd_session'); S.user = null; S.page = 'home'; render(); }
 
@@ -669,12 +777,14 @@ function mine() {
    ======================================================== */
 (async function init() {
   S.month = todayISO().slice(0, 7);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   $('#app').innerHTML = '<div class="login"><div class="muted">جارٍ التحميل…</div></div>';
   try { await DB.init(); } catch (e) { $('#app').innerHTML = `<div class="login"><div class="box"><h2>تعذّر الاتصال بـ Firebase</h2><p class="muted">${esc(e.message || e)}</p></div></div>`; return; }
   let first = true;
   COLS.forEach(c => DB.subscribe(c, list => {
     S.data[c] = list;
-    if (c === 'users') { const ph = localStorage.getItem('hd_session'); if (ph) { const u = list.find(x => x.phone === ph); if (u && !u.disabled) { S.user = u; if (first) { S.page = u.role === 'head' ? 'home' : 'entry'; first = false; } } else S.user = null; } }
+    if (c === 'activity') localNotify(list);
+    if (c === 'users') { const ph = localStorage.getItem('hd_session'); if (ph) { const u = list.find(x => x.phone === ph); if (u && !u.disabled) { S.user = u; if (first) { S.page = u.role === 'head' ? 'home' : 'entry'; first = false; if (notifEnabled()) PUSH.registerFCM(); } } else S.user = null; } }
     if (!$('.ov')) render();
   }));
   render();
