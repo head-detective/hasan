@@ -12,7 +12,7 @@ async function pushToHeads(title, body) {
   const res = await admin.messaging().sendEachForMulticast({
     tokens,
     notification: { title, body },
-    webpush: { notification: { icon: 'icon-192.png', dir: 'rtl', lang: 'ar' }, fcmOptions: { link: '/' } }
+    webpush: { notification: { icon: 'icon-192.png', dir: 'rtl', lang: 'ar' }, fcmOptions: { link: '/hasan/' } }
   });
   // حذف التوكنات التالفة
   const bad = [];
